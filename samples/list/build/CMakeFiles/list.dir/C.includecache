@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/boot/opts/redis/redis/samples/adlist.h
+
+/boot/opts/redis/redis/samples/main.c
+unistd.h
+-
+stdio.h
+-
+string.h
+-
+adlist.h
+/boot/opts/redis/redis/samples/adlist.h
+utils.h
+/boot/opts/redis/redis/samples/utils.h
+
+/boot/opts/redis/redis/samples/utils.h
+stdio.h
+-
+errno.h
+-
+string.h
+-
+

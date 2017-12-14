@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+
+//创建事件集合
 aeEventLoop *aeCreateEventLoop(void) {
     aeEventLoop *eventLoop;
 
@@ -27,10 +29,12 @@ aeEventLoop *aeCreateEventLoop(void) {
     return eventLoop;
 }
 
+//删除事件集合
 void aeDeleteEventLoop(aeEventLoop *eventLoop) {
     free(eventLoop);
 }
 
+//设置暂停
 void aeStop(aeEventLoop *eventLoop) {
     eventLoop->stop = 1;
 }
@@ -79,17 +83,18 @@ static void aeGetTime(long *seconds, long *milliseconds)
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
-    *seconds = tv.tv_sec;
-    *milliseconds = tv.tv_usec/1000;
+    *seconds = tv.tv_sec;             //秒
+    *milliseconds = tv.tv_usec/1000; //毫秒
 }
 
 static void aeAddMillisecondsToNow(long long milliseconds, long *sec, long *ms) {
     long cur_sec, cur_ms, when_sec, when_ms;
 
     aeGetTime(&cur_sec, &cur_ms);
-    when_sec = cur_sec + milliseconds/1000;
-    when_ms = cur_ms + milliseconds%1000;
-    if (when_ms >= 1000) {
+    when_sec = cur_sec + milliseconds/1000; //秒
+    when_ms = cur_ms + milliseconds%1000;   //毫秒 
+
+    if (when_ms >= 1000) { //进位
         when_sec ++;
         when_ms -= 1000;
     }
@@ -144,13 +149,16 @@ int aeDeleteTimeEvent(aeEventLoop *eventLoop, long long id)
  * If there are no timers NULL is returned.
  *
  * Note that's O(N) since time events are unsorted. */
+
+//按照等待时间最久的时间处理
 static aeTimeEvent *aeSearchNearestTimer(aeEventLoop *eventLoop)
 {
-    aeTimeEvent *te = eventLoop->timeEventHead;
+    aeTimeEvent *te = eventLoop->timeEventHead; //获取时间事件头
     aeTimeEvent *nearest = NULL;
 
-    while(te) {
-        if (!nearest || te->when_sec < nearest->when_sec ||
+    while(te) { 
+        //查找最靠近的时间时间 
+        if (!nearest || te->when_sec < nearest->when_sec || 
                 (te->when_sec == nearest->when_sec &&
                  te->when_ms < nearest->when_ms))
             nearest = te;
@@ -176,10 +184,12 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
 {
     int maxfd = 0, numfd = 0, processed = 0;
     fd_set rfds, wfds, efds;
-    aeFileEvent *fe = eventLoop->fileEventHead;
-    aeTimeEvent *te;
+
+    aeFileEvent *fe = eventLoop->fileEventHead;//文件事件头
+
+    aeTimeEvent *te;   //时间事件集合
     long long maxId;
-    AE_NOTUSED(flags);
+    AE_NOTUSED(flags); //置空
 
     /* Nothing to do? return ASAP */
     if (!(flags & AE_TIME_EVENTS) && !(flags & AE_FILE_EVENTS)) return 0;
@@ -217,9 +227,9 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
              * timer to fire. */
             aeGetTime(&now_sec, &now_ms);
             tvp = &tv;
-            tvp->tv_sec = shortest->when_sec - now_sec;
-            if (shortest->when_ms < now_ms) {
-                tvp->tv_usec = ((shortest->when_ms+1000) - now_ms)*1000;
+            tvp->tv_sec = shortest->when_sec - now_sec; //和现在相差的时间（秒）
+            if (shortest->when_ms < now_ms) { //如果
+                tvp->tv_usec = ((shortest->when_ms+1000) - now_ms)*1000; //
                 tvp->tv_sec --;
             } else {
                 tvp->tv_usec = (shortest->when_ms - now_ms)*1000;
@@ -246,9 +256,9 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
                 if ((fe->mask & AE_READABLE && FD_ISSET(fd, &rfds)) ||
                     (fe->mask & AE_WRITABLE && FD_ISSET(fd, &wfds)) ||
                     (fe->mask & AE_EXCEPTION && FD_ISSET(fd, &efds)))
-                {
-                    int mask = 0;
+                {  
 
+                    int mask = 0;
                     if (fe->mask & AE_READABLE && FD_ISSET(fd, &rfds))
                         mask |= AE_READABLE;
                     if (fe->mask & AE_WRITABLE && FD_ISSET(fd, &wfds))
@@ -283,12 +293,12 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
                 te = te->next;
                 continue;
             }
-            aeGetTime(&now_sec, &now_ms);
+
+            aeGetTime(&now_sec, &now_ms); //获取当前时间 
             if (now_sec > te->when_sec ||
                 (now_sec == te->when_sec && now_ms >= te->when_ms))
-            {
+            {   
                 int retval;
-
                 id = te->id;
                 retval = te->timeProc(eventLoop, id, te->clientData);
                 /* After an event is processed our time event list may

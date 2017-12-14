@@ -1,4 +1,5 @@
 /* SDSLib, A C dynamic strings library
+ * p
  *
  * Copyright (C) 2006-2009 Salvatore Sanfilippo, antirez@gmail.com
  * This softare is released under the following BSD license:
@@ -30,16 +31,17 @@
 
 #include <sys/types.h>
 
-typedef char *sds;
+typedef char * sds;
 
 //string 结构 
 struct sdshdr {
     long len; //strsize 大小
     long free; //剩余空间
     char buf[0]; //实际bufstr;
+};
 
+sds sdsnewlen(const void *init, size_t initlen);//创建
 
-    sds sdsnewlen(const void *init, size_t initlen);//创建
 sds sdsnew(const char *init);
 sds sdsempty();
 size_t sdslen(const sds s);

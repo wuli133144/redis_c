@@ -14,9 +14,9 @@
 #define DICT_NOTUSED(V) ((void) V)
 
 typedef struct dictEntry {
-    void *key;
-    void *val;
-    struct dictEntry *next;
+    void *key; //key 
+    void *val; //value
+    struct dictEntry *next; //下一个
 } dictEntry;
 
 typedef struct dictType {

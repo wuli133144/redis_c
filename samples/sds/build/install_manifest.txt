@@ -1,0 +1,1 @@
+/boot/opts/redis/redis/samples/sds/bin/list
