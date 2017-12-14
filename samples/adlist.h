@@ -63,10 +63,6 @@ list *listAddNodeHead(list *list, void *value);
 list *listAddNodeTail(list *list, void *value);
 void listDelNode(list *list, listNode *node);
 listIter *listGetIterator(list *list, int direction);
-
-
-
-
 listNode *listNextElement(listIter *iter);
 void listReleaseIterator(listIter *iter);
 list *listDup(list *orig);
