@@ -22,6 +22,9 @@ typedef struct aeFileEvent {
 } aeFileEvent;
 
 
+
+
+//wuyujie
 /* Time event structure */
 typedef struct aeTimeEvent {
     long long id; /* time event identifier. */
